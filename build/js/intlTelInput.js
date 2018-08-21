@@ -569,11 +569,21 @@
             if (this.options.dropdownContainer) {
                 this.dropdown.appendTo(this.options.dropdownContainer);
             }
+
+            console.log(this);
+
             // show the menu and grab the dropdown height
             this.dropdownHeight = this.countryList.removeClass("hide").attr("aria-expanded", "true").outerHeight();
             if (!this.isMobile) {
-                var pos = this.telInput.offset(), inputTop = pos.top, windowTop = $(window).scrollTop(), // dropdownFitsBelow = (dropdownBottom < windowBottom)
-                dropdownFitsBelow = inputTop + this.telInput.outerHeight() + this.dropdownHeight < windowTop + $(window).height(), dropdownFitsAbove = inputTop - this.dropdownHeight > windowTop;
+                var pos = this.telInput.offset(), 
+                inputTop = pos.top, 
+                windowTop = $(window).scrollTop(), // dropdownFitsBelow = (dropdownBottom < windowBottom)
+                dropdownFitsBelow = inputTop + this.telInput.outerHeight() + this.dropdownHeight < windowTop + $(window).height(), 
+                dropdownFitsAbove = inputTop - this.dropdownHeight > windowTop,
+                width = this.telInput.outerWidth();
+
+                // console.log(width);
+
                 // by default, the dropdown will be below the input. If we want to position it above the input, we add the dropup class.
                 this.countryList.toggleClass("dropup", !dropdownFitsBelow && dropdownFitsAbove);
                 // if dropdownContainer is enabled, calculate postion
@@ -581,9 +591,11 @@
                     // by default the dropdown will be directly over the input because it's not in the flow. If we want to position it below, we need to add some extra top value.
                     var extraTop = !dropdownFitsBelow && dropdownFitsAbove ? 0 : this.telInput.innerHeight();
                     // calculate placement
+                    console.log(this);
                     this.dropdown.css({
                         top: inputTop + extraTop,
-                        left: pos.left
+                        left: pos.left,
+                        width: width
                     });
                     // close menu on window scroll
                     $(window).on("scroll" + this.ns, function() {
@@ -608,11 +620,11 @@
             // (except when this initial opening click is bubbling up)
             // we cannot just stopPropagation as it may be needed to close another instance
             var isOpening = true;
-            $("html").on("click" + this.ns, function(e) {
-                if (!isOpening) {
+            $("html").on("mousedown" + this.ns, function(e) {
+                if (!e.target.closest(".country-list")){
                     that._closeDropdown();
+                    
                 }
-                isOpening = false;
             });
             // listen for up/down scrolling, enter to select, or letters to jump to country name.
             // use keydown as keypress doesn't fire for non-char keys and we want to catch if they
