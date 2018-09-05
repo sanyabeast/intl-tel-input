@@ -570,8 +570,6 @@
                 this.dropdown.appendTo(this.options.dropdownContainer);
             }
 
-            console.log(this);
-
             // show the menu and grab the dropdown height
             this.dropdownHeight = this.countryList.removeClass("hide").attr("aria-expanded", "true").outerHeight();
             if (!this.isMobile) {
@@ -582,7 +580,6 @@
                 dropdownFitsAbove = inputTop - this.dropdownHeight > windowTop,
                 width = this.telInput.outerWidth();
 
-                // console.log(width);
 
                 // by default, the dropdown will be below the input. If we want to position it above the input, we add the dropup class.
                 this.countryList.toggleClass("dropup", !dropdownFitsBelow && dropdownFitsAbove);
@@ -591,16 +588,19 @@
                     // by default the dropdown will be directly over the input because it's not in the flow. If we want to position it below, we need to add some extra top value.
                     var extraTop = !dropdownFitsBelow && dropdownFitsAbove ? 0 : this.telInput.innerHeight();
                     // calculate placement
-                    console.log(this);
                     this.dropdown.css({
                         top: inputTop + extraTop,
                         left: pos.left,
                         width: width
                     });
                     // close menu on window scroll
-                    $(window).on("scroll" + this.ns, function() {
-                        that._closeDropdown();
-                    });
+                    $(window).on("mousewheel" + this.ns, function(evt) {
+                        if (evt.target.isSameNode(this.dropdown[0]) || this.dropdown[0].contains(evt.target)){
+                            return;
+                        } else {
+                            that._closeDropdown();                            
+                        }
+                    }.bind(this));
                 }
             }
         },
